@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -39,29 +40,23 @@ class _MyHomePageState extends State<MyHomePage> {
   String _cityTemperature = "";
   String _cityWeatherCondition = "";
   final Map<String, Map<String, String>> cityWeatherMap = HashMap();
+  final Random random = Random();
+  final List<String> cityWeatherConditionList = ["Sunny", "Cloudy", "Rainy"];
 
   final Map<String, String> atlantaWeatherMap = {
   "cityName": "Atlanta",
-  "cityTemperature": "90 degrees",
-  "cityWeatherCondition": "Raining"
   };
 
   final Map<String, String> seattleWeatherMap = {
     "cityName": "Seattle",
-    "cityTemperature": "65 degrees",
-    "cityWeatherCondition": "Snowing"
   };
 
   final Map<String, String> newYorkWeatherMap = {
     "cityName": "New York City",
-    "cityTemperature": "20 degrees",
-    "cityWeatherCondition": "Hailing"
   };
 
   final Map<String, String> miamiWeatherMap = {
     "cityName": "Miami",
-    "cityTemperature": "70 degrees",
-    "cityWeatherCondition": "Thunder Storming"
   };
 
   @override
@@ -83,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     _cityNameController.clear();
+    _cityInputName = "";
   }
 
   // Fetch the city name for inputted city
@@ -96,15 +92,27 @@ class _MyHomePageState extends State<MyHomePage> {
   // Fetch the temperature for a specific city
   void _fetchCityTemperature(final String cityName) {
     setState(() {
-      _cityTemperature = cityWeatherMap[cityName.toLowerCase()
-          .replaceAll(' ', '')]?["cityTemperature"] ?? "Not Found";
+      if(!cityWeatherMap.containsKey(cityName.toLowerCase().replaceAll(' ', ''))) {
+        _cityTemperature = "Not Found";
+        return;
+      }
+
+      final int temperatureRandomInt = 15 + random.nextInt(16);
+      _cityTemperature = "$temperatureRandomInt°C";;
     });
   }
 
   // Fetch the weather condition for a specific city
   void _fetchCityWeatherCondition(final String cityName) {
-    _cityWeatherCondition = cityWeatherMap[cityName.toLowerCase()
-        .replaceAll(' ', '')]?["cityWeatherCondition"] ?? "Not Found";
+    setState(() {
+      if(!cityWeatherMap.containsKey(cityName.toLowerCase().replaceAll(' ', ''))) {
+        _cityWeatherCondition = "Not Found";
+        return;
+      }
+
+      final int weatherConditionRandomInt = random.nextInt(3);
+      _cityWeatherCondition = cityWeatherConditionList[weatherConditionRandomInt];
+    });
   }
 
   @override
@@ -150,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             SizedBox(height: 8.0),
             Text(
-                'Temperature: ' + _cityWeatherCondition
+                'Weather Condition: ' + _cityWeatherCondition
             ),
           ],
         ),
