@@ -77,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _fetchCityWeatherCondition(_cityInputName);
     });
 
+    // Clear the text field controller and the city input name
     _cityNameController.clear();
     _cityInputName = "";
   }
