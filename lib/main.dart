@@ -84,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Fetch the city name for inputted city
   void _fetchCityName(final String cityName) {
     setState(() {
+      // If the inputted city is not found in the HashMap return Not Found
       _cityName = cityWeatherMap[cityName.toLowerCase()
           .replaceAll(' ', '')]?["cityName"] ?? "Not Found";
     });
