@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Map<String, Map<String, String>> cityWeatherMap = HashMap();
   final Random random = Random();
   final List<String> cityWeatherConditionList = ["Sunny", "Cloudy", "Rainy"];
+  List<Map<String, String>> _sevenDayForecastList = [];
 
   final Map<String, String> atlantaWeatherMap = {
   "cityName": "Atlanta",
@@ -77,9 +78,56 @@ class _MyHomePageState extends State<MyHomePage> {
       _fetchCityWeatherCondition(_cityInputName);
     });
 
+    _sevenDayForecastList = List.generate(7, (index) {
+      return {
+        "day": "Day ${index + 1}",
+        "temperature": "",
+        "condition": ""
+      };
+    });
+
     // Clear the text field controller and the city input name
     _cityNameController.clear();
     _cityInputName = "";
+  }
+
+  // Fetch weather data for 7 days for a specific city
+  void _fetch7DayWeatherData() {
+    setState(() {
+      _cityInputName = _cityNameController.text;
+      if(!cityWeatherMap.containsKey(_cityInputName.toLowerCase().replaceAll(' ', ''))) {
+        _cityName = "Not Found";
+        _cityTemperature = "Not Found";
+        _cityWeatherCondition = "Not Found";
+
+        _sevenDayForecastList = List.generate(7, (index) {
+          return {
+            "day": "Day ${index + 1}",
+            "temperature": "",
+            "condition": ""
+          };
+        });
+
+        _cityNameController.clear();
+        return;
+      }
+
+      _fetchCityName(_cityInputName);
+
+      _sevenDayForecastList = List.generate(7, (index) {
+        final int temperatureRandomInt = 15 + random.nextInt(16);
+        final int weatherConditionRandomInt = random.nextInt(3);
+        return {
+          "day": "Day ${index + 1}",
+          "temperature": "$temperatureRandomInt°C",
+          "condition": cityWeatherConditionList[weatherConditionRandomInt]
+        };
+      });
+    });
+
+    _cityTemperature = "";
+    _cityWeatherCondition = "";
+    _cityNameController.clear();
   }
 
   // Fetch the city name for inputted city
@@ -162,6 +210,33 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
                 'Weather Condition: ' + _cityWeatherCondition
             ),
+            SizedBox(height: 8.0),
+            ElevatedButton(
+              onPressed: _fetch7DayWeatherData,
+              child: Text('Fetch 7 Day Weather Forecast'),
+            ),
+            SizedBox(height: 16.0),
+            _sevenDayForecastList.isNotEmpty
+                ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: _sevenDayForecastList.map((dayWeather) {
+                return Container(
+                  padding: EdgeInsets.all(8.0),
+                  width: 150,
+                  height: 100,
+                  color: Colors.lightBlueAccent,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(dayWeather["day"]!, style: TextStyle(color: Colors.white)),
+                      Text(dayWeather["temperature"]!, style: TextStyle(color: Colors.white)),
+                      Text(dayWeather["condition"]!, style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                );
+              }).toList(),
+            )
+                : SizedBox.shrink(),
           ],
         ),
       ),
